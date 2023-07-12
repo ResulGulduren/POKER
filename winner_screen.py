@@ -51,18 +51,19 @@ class WinnerScreen(QtWidgets.QMainWindow):
             self.count += 1
             
             
-            
             if self.option == self.game.rank_names[self.game.number]:
-                self.winner=self.game.find_winner(self.game.hand_evaluation)
+                self.winner = self.game.find_winner(self.game.hand_evaluation)
                 print(self.winner)
                 print(self.game.playerstwocards)
                 print(self.game.community_cards)
-                self.show_winner()
-                #if len(self.game.winner_list) < 3:
-                #    self.show_winner()
-                
+                if self.winner is not None:
+                    self.show_winner()
+                else:
+                    self.game = PokerGame()
+                    continue
+
                 break
-            self.game=PokerGame()
+            self.game = PokerGame()
 
         
 
