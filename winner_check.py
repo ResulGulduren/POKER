@@ -218,18 +218,17 @@ class PokerGame:
     def find_winner(self, list):
         
         self.number = max(list)
-        winnerindex = list.index(self.number)
-        winner = "Player{} Hand: {} Ranking: {}".format(
-            winnerindex + 1, self.playerstwocards[winnerindex], self.rank_names[self.number]
-        )
-        return winner
-        # one_winner = list.count(number)
-        # if one_winner == 1:
-        #     winnerindex = list.index(number)
-        #     winner = "Player{} Hand:{} Ranking:{}" .format(winnerindex+1, self.playerstwocards[winnerindex], self.rank_names[number])
-        #     return winner
-        # else:
-        #     self.start_game(6)
+        one_winner = list.count(self.number)
+        if one_winner == 1:
+            winnerindex = list.index(self.number)
+            winner = "Player{} Hand:{} Ranking:{}".format(
+                winnerindex + 1,
+                self.playerstwocards[winnerindex],
+                self.rank_names[self.number],
+            )
+            return winner
+        else:
+            self.restart_game()
 
     def start_game(self, num_players):
         pass
