@@ -53,7 +53,7 @@ class PokerGame:
 
         # # Veritabanına kaydetme
         # cursor.execute("INSERT INTO winners (winner_hand,total_games, win_games) VALUES (?, ?, ?)",
-        #        (str(winner_hand), total_games, win_games))
+        #     (str(winner_hand), total_games, win_games))
         # # Veritabanını kaydetme ve bağlantıyı kapatma
         # connection.commit()
         # connection.close()
@@ -133,7 +133,17 @@ class PokerGame:
             if all([dist[value + k] >= 1 for k in range(5)]):
                 return True
         return False
-
+    
+    def check_straight_flush(self, hand):
+        define = self.define_suit(hand)
+        max_suit = max(define, key=define.get)
+        control_list = [card for card in hand if card[-1] == max_suit]
+        if len(control_list) >= 5:
+            result = self.check_straight(control_list)
+            return result
+        else:
+            return False
+        
     def card_count(self, hand, num, but=None):
         dist = self.hand_dist(hand)
         for value in range(2, 15):
@@ -146,17 +156,15 @@ class PokerGame:
     def check_high_card(self, hand):
         return max(self.value(card) for card in hand)
 
+    
     def hand_rank(self, hand):
         if self.check_royal_flush(hand):
             return 9
-        if self.check_straight(hand) and self.check_flush(hand):
+        if self.check_straight_flush(hand):
             return 8
         if self.card_count(hand, 4) is not None:
             return 7
-        if (
-            self.card_count(hand, 3) is not None
-            and self.card_count(hand, 2) is not None
-        ):
+        if self.card_count(hand, 3) is not None and self.card_count(hand, 2) is not None:
             return 6
         if self.check_flush(hand):
             return 5
