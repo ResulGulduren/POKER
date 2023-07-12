@@ -31,32 +31,65 @@ class PokerGame:
             players_hand = player + self.community_cards
             hand = self.hand_rank(players_hand)
             self.hand_evaluation.append(hand)
-        #     print(
-        #         f"Player {index+1}: {players_hand} - Hand: {hand} {self.rank_names[hand]}"
-        #     )
-        # print(self.hand_evaluation)
+       
         evaluation = self.find_winner(self.hand_evaluation)
-        # print(f"\nWinner: {evaluation}")
         
         
+        
 
-        # # Veritabanı bağlantısı
-        # connection = sqlite3.connect("poker_statistic.db")
-        # cursor = connection.cursor()
+        # Veritabanı bağlantısı
+        connection = sqlite3.connect("poker_statistic.db")
+        cursor = connection.cursor()
 
-        # # Oyun sonucunu kaydetme
-        # evaluation = self.find_winner(self.hand_evaluation)
-        # winner_index = evaluation.index(max(evaluation))
-        # winner_hand = self.playerstwocards[winner_index]
-        # total_games = 140
-        # win_games = 100
+        # Oyun sonucunu kaydetme
+        winner_index = evaluation.index(max(evaluation))
+        winner_hand = self.playerstwocards[winner_index]
+        total_games = 1  # Her oyun sonucunda toplam oyun sayısını 1 artırıyoruz
 
-        # # Veritabanına kaydetme
-        # cursor.execute("INSERT INTO winners (winner_hand,total_games, win_games) VALUES (?, ?, ?)",
-        #     (str(winner_hand), total_games, win_games))
-        # # Veritabanını kaydetme ve bağlantıyı kapatma
-        # connection.commit()
-        # connection.close()
+        # Oyuncu elinin veritabanında olup olmadığını kontrol etme
+        cursor.execute("SELECT * FROM winners WHERE hand = ?", (str(winner_hand),))
+        existing_hand = cursor.fetchone()
+
+        if existing_hand is not None:
+            # El zaten veritabanında kayıtlıysa sadece total_games ve wined_games değerlerini güncelle
+            total_games += existing_hand[1]
+            win_games = existing_hand[2] + 1
+            win_rate = win_games / total_games  # Kazanma oranını hesapla
+            cursor.execute(
+                "UPDATE winners SET total_games = ?, wined_games = ?, rate = ? WHERE hand = ?",
+                (total_games, win_games, win_rate, str(winner_hand)),
+            )
+        else:
+            # El veritabanında kayıtlı değilse yeni bir kayıt oluştur
+            cursor.execute(
+                "INSERT INTO winners (hand, total_games, wined_games, rate) VALUES (?, ?, ?, ?)",
+                (str(winner_hand), total_games, 1, 1.0),  # İlk kazanan el için kazanma oranı 1 olarak varsayıldı
+            )
+
+        # Diğer oyuncuların total_games değerini 1 artırma
+        for i, player_hand in enumerate(self.playerstwocards):
+            if i != winner_index:
+                cursor.execute(
+                    "SELECT * FROM winners WHERE hand = ?", (str(player_hand),)
+                )
+                existing_hand = cursor.fetchone()
+                if existing_hand is not None:
+                    total_games = existing_hand[1] + 1
+                    win_rate = existing_hand[3]  # Kazanma oranını aynen kullan
+                    cursor.execute(
+                        "UPDATE winners SET total_games = ?, rate = ? WHERE hand = ?",
+                        (total_games, win_rate, str(player_hand)),
+                    )
+                else:
+                    cursor.execute(
+                        "INSERT INTO winners (hand, total_games, wined_games, rate) VALUES (?, ?, ?, ?)",
+                        (str(player_hand), 1, 0, 0.0),  # Kazanma oranı 0 olarak varsayıldı
+                    )
+
+        # Veritabanını kaydetme ve bağlantıyı kapatma
+        connection.commit()
+        connection.close()
+
         
 
     def create_card_deck(self):
@@ -164,7 +197,10 @@ class PokerGame:
             return 8
         if self.card_count(hand, 4) is not None:
             return 7
-        if self.card_count(hand, 3) is not None and self.card_count(hand, 2) is not None:
+        if (
+            self.card_count(hand, 3) is not None
+            and self.card_count(hand, 2) is not None
+        ) or self.card_count(hand, 3, self.card_count(hand, 3)) is not None:
             return 6
         if self.check_flush(hand):
             return 5
