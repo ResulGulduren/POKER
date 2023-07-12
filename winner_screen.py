@@ -4,7 +4,7 @@
 
 from PyQt5 import QtWidgets, QtGui
 from utils.ui.winner_screen_ui import Ui_MainWindow
-from winner_check import PokerGame
+from utils.winner_check import PokerGame
 import random
 
 
@@ -14,6 +14,7 @@ class WinnerScreen(QtWidgets.QMainWindow):
         self.screen = Ui_MainWindow()
         self.screen.setupUi(self)
         self.game = PokerGame()
+        
         self.screen.statistics_btn.clicked.connect(self.open_statistics_screen)
         self.screen.two_winner_btn.clicked.connect(self.two_winner)
         self.screen.Royalflush_btn.clicked.connect(self.royal_flush)
@@ -46,16 +47,24 @@ class WinnerScreen(QtWidgets.QMainWindow):
 
     def winner_option(self):
         while True:
+           
             self.count += 1
-            self.game.start_game(6)
+            
+            
+            
             if self.option == self.game.rank_names[self.game.number]:
+                self.winner=self.game.find_winner(self.game.hand_evaluation)
+                print(self.winner)
+                print(self.game.playerstwocards)
+                print(self.game.community_cards)
                 self.show_winner()
                 #if len(self.game.winner_list) < 3:
                 #    self.show_winner()
+                
                 break
-            self.game.start_game(6)
+            self.game=PokerGame()
 
-        #self.game.restartGame()
+        
 
     def royal_flush(self):
         self.count = 0
@@ -64,17 +73,17 @@ class WinnerScreen(QtWidgets.QMainWindow):
 
     def flush_straight(self):
         self.count = 0
-        self.option = 'straight flush'
+        self.option = 'Straight Flush'
         self.winner_option()
 
     def four_of_a_kind(self):
         self.count = 0
-        self.option = 'Four of a kind'
+        self.option = 'Four of a Kind'
         self.winner_option()
 
     def full_house(self):
         self.count = 0
-        self.option = 'Full house'
+        self.option = 'Full House'
         self.winner_option()
 
     def flush(self):
@@ -89,22 +98,22 @@ class WinnerScreen(QtWidgets.QMainWindow):
 
     def three_of_a_kind(self):
         self.count = 0
-        self.option = 'Three of a kind'
+        self.option = 'Three of a Kind'
         self.winner_option()
 
     def two_pair(self):
         self.count = 0
-        self.option = 'Two pair'
+        self.option = 'Two Pair'
         self.winner_option()
 
     def one_pair(self):
         self.count = 0
-        self.option = 'One pair'
+        self.option = 'Pair'
         self.winner_option()
 
     def higher_card(self):
         self.count = 0
-        self.option = 'Higher card'
+        self.option = 'High Card'
         self.winner_option()
 
     def show_winner(self):
@@ -120,49 +129,49 @@ class WinnerScreen(QtWidgets.QMainWindow):
         self.screen.p1_card2.setPixmap(QtGui.QPixmap(
             f":/icon/{self.game.playerstwocards[0][1]}.png"))
         self.screen.p2_card1.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.players['P2'][0]}.png"))
+            f":/icon/{self.game.playerstwocards[1][0]}.png"))
         self.screen.p2_card2.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.players['P2'][1]}.png"))
+            f":/icon/{self.game.playerstwocards[1][1]}.png"))
         self.screen.p3_card1.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.players['P3'][0]}.png"))
+            f":/icon/{self.game.playerstwocards[2][0]}.png"))
         self.screen.p3_card2.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.players['P3'][1]}.png"))
+            f":/icon/{self.game.playerstwocards[2][1]}.png"))
         self.screen.p4_card1.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.players['P4'][0]}.png"))
+            f":/icon/{self.game.playerstwocards[3][0]}.png"))
         self.screen.p4_card2.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.players['P4'][1]}.png"))
+            f":/icon/{self.game.playerstwocards[3][1]}.png"))
         self.screen.p5_card1.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.players['P5'][0]}.png"))
+            f":/icon/{self.game.playerstwocards[4][0]}.png"))
         self.screen.p5_card2.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.players['P5'][1]}.png"))
+            f":/icon/{self.game.playerstwocards[4][1]}.png"))
         self.screen.p6_card1.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.players['P6'][0]}.png"))
+            f":/icon/{self.game.playerstwocards[5][0]}.png"))
         self.screen.p6_card2.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.players['P6'][1]}.png"))
+            f":/icon/{self.game.playerstwocards[5][1]}.png"))
         self.screen.desk_card1.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.board_cards[0]}.png"))
+            f":/icon/{self.game.community_cards[0]}.png"))
         self.screen.desk_card2.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.board_cards[1]}.png"))
+            f":/icon/{self.game.community_cards[1]}.png"))
         self.screen.desk_card3.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.board_cards[2]}.png"))
+            f":/icon/{self.game.community_cards[2]}.png"))
         self.screen.desk_card4.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.board_cards[3]}.png"))
+            f":/icon/{self.game.community_cards[3]}.png"))
         self.screen.desk_card5.setPixmap(QtGui.QPixmap(
-            f":/icon/{self.game.board_cards[4]}.png"))
-        if 'P1' in self.game.winner_list:
+            f":/icon/{self.game.community_cards[4]}.png"))
+        if 'Player1' in self.winner:
             self.screen.label_p1bet.setText('Winner')
-        if 'P2' in self.game.winner_list:
+        if 'Player2' in self.winner:
             self.screen.label_p2bet.setText('Winner')
-        if 'P3' in self.game.winner_list:
+        if 'Player3' in self.winner:
             self.screen.label_p3bet.setText('Winner')
-        if 'P4' in self.game.winner_list:
+        if 'Player4' in self.winner:
             self.screen.label_p4bet.setText('Winner')
-        if 'P5' in self.game.winner_list:
+        if 'Player5' in self.winner:
             self.screen.label_p5bet.setText('Winner')
-        if 'P6' in self.game.winner_list:
+        if 'Player6' in self.winner:
             self.screen.label_p6bet.setText('Winner')
 
-        self.screen.label_playerturn.setText(self.getWinnerList())
+        self.screen.label_playerturn.setText('Winner:{}\n{}\n{}'.format(self.winner[0:7],self.option,self.count))
 
     def getWinnerList(self):
         res = ""
@@ -170,3 +179,4 @@ class WinnerScreen(QtWidgets.QMainWindow):
             res += str(int((i + 2) / 2)) + ". " + str(self.game.winner_list[i]) + " " + \
                 str(self.game.winner_list[i+1]) + "\n"
         return res
+
