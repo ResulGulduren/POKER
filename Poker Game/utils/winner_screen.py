@@ -111,9 +111,10 @@ class WinnerScreen(QtWidgets.QMainWindow):
                 #print('Kazananlar',self.game.winning_players)
                 if self.winner is not None:
                     self.show_winner()
+                    self.database()
                 else:
                     self.game = PokerGame()
-                    self.database()
+                   
                     continue
 
                 break
