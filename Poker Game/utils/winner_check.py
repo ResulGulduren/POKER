@@ -38,72 +38,9 @@ class PokerGame:
             if self.hand_evaluation[index] == max(self.hand_evaluation):
                 self.winning_players.append(self.playerstwocards[index])
             else:
-                self.losing_players.append(self.playerstwocards[index])
-                       
-        #print('Kay',self.losing_players)
-        #print('Kaz',self.winning_players)
-           
+                self.losing_players.append(self.playerstwocards[index])           
            
         evaluation = self.find_winner(self.hand_evaluation)
-        #print(self.hand_evaluation)
-        #print(evaluation)
-        
-        
-        
-        # # Veritabanı bağlantısı
-        # connection = sqlite3.connect("poker_statistic.db")
-        # cursor = connection.cursor()
-
-        # # Oyun sonucunu kaydetme
-        # winner_index = evaluation.index(max(evaluation))
-        # winner_hand = self.playerstwocards[winner_index]
-        # total_games = 1  # Her oyun sonucunda toplam oyun sayısını 1 artırıyoruz
-
-        # # Oyuncu elinin veritabanında olup olmadığını kontrol etme
-        # cursor.execute("SELECT * FROM winners WHERE hand = ?", (str(winner_hand),))
-        # existing_hand = cursor.fetchone()
-
-        # if existing_hand is not None:
-        #     # El zaten veritabanında kayıtlıysa sadece total_games ve wined_games değerlerini güncelle
-        #     total_games += existing_hand[1]
-        #     win_games = existing_hand[2] + 1
-        #     win_rate = win_games / total_games  # Kazanma oranını hesapla
-        #     cursor.execute(
-        #         "UPDATE winners SET total_games = ?, wined_games = ?, rate = ? WHERE hand = ?",
-        #         (total_games, win_games, win_rate, str(winner_hand)),
-        #     )
-        # else:
-        #     # El veritabanında kayıtlı değilse yeni bir kayıt oluştur
-        #     cursor.execute(
-        #         "INSERT INTO winners (hand, total_games, wined_games, rate) VALUES (?, ?, ?, ?)",
-        #         (str(winner_hand), total_games, 1, 1.0),  # İlk kazanan el için kazanma oranı 1 olarak varsayıldı
-        #     )
-
-        # # Diğer oyuncuların total_games değerini 1 artırma
-        # for i, player_hand in enumerate(self.playerstwocards):
-        #     if i != winner_index:
-        #         cursor.execute(
-        #             "SELECT * FROM winners WHERE hand = ?", (str(player_hand),)
-        #         )
-        #         existing_hand = cursor.fetchone()
-        #         if existing_hand is not None:
-        #             total_games = existing_hand[1] + 1
-        #             win_rate = existing_hand[3]  # Kazanma oranını aynen kullan
-        #             cursor.execute(
-        #                 "UPDATE winners SET total_games = ?, rate = ? WHERE hand = ?",
-        #                 (total_games, win_rate, str(player_hand)),
-        #             )
-        #         else:
-        #             cursor.execute(
-        #                 "INSERT INTO winners (hand, total_games, wined_games, rate) VALUES (?, ?, ?, ?)",
-        #                 (str(player_hand), 1, 0, 0.0),  # Kazanma oranı 0 olarak varsayıldı
-        #             )
-
-        # # Veritabanını kaydetme ve bağlantıyı kapatma
-        # connection.commit()
-        # connection.close()
-
-        
 
     def create_card_deck(self):
         card_deck = []
@@ -241,34 +178,16 @@ class PokerGame:
             )
             return winner
         else:
-            self.restart_game()
-            
-            
-        # one_winner = list.count(number)
-        # if one_winner == 1:
-        #     winnerindex = list.index(number)
-        #     winner = "Player{} Hand:{} Ranking:{}" .format(winnerindex+1, self.playerstwocards[winnerindex], self.rank_names[number])
-        #     return winner
-        # else:
-        #     self.start_game(6)
-
-    def start_game(self, num_players):
-        pass
+            PokerGame()
+            # self.restart_game()
         
-    def restart_game(self):
-        self.community_cards = []
-        self.playerstwocards = []
-        self.create_card_deck()
-        for _ in range(6):
-            player_cards = self.deal_cards(2)
-            self.playerstwocards.append(player_cards)
-        self.community_cards = self.deal_cards(5)
+    # def restart_game(self):
+    #     self.community_cards = []
+    #     self.playerstwocards = []
+    #     self.create_card_deck()
+    #     for _ in range(6):
+    #         player_cards = self.deal_cards(2)
+    #         self.playerstwocards.append(player_cards)
+    #     self.community_cards = self.deal_cards(5)
        
 PokerGame()
-
-# if __name__ == "__main__":
-#      poker_game = PokerGame()
-#      poker_game.start_game(6)
-
-# ...
-
